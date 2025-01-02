@@ -1,10 +1,22 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { FAB } from "react-native-paper";
+import { useAppTopPageViewModel } from "./appTopPageViewModel";
+import { WordCard } from "@/components/wordCard";
 
 const AppTopPage = () => {
+  const {
+    state: { words },
+    action: { addWord },
+  } = useAppTopPageViewModel();
+
   return (
     <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        {words.map((word, i) => (
+          <WordCard word={word} key={i} />
+        ))}
+      </ScrollView>
       <FAB
         style={styles.fab}
         icon="plus"
@@ -19,7 +31,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
-    alignItems: "center",
+  },
+  scrollView: {
+    paddingTop: 8,
+    flexGrow: 1,
   },
   fab: {
     position: "absolute",

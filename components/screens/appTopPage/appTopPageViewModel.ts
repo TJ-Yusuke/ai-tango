@@ -1,22 +1,76 @@
 import { ViewModelFunc } from "@/components/ViewModelFunc";
-import { useState } from "react";
+import { Word } from "@/models/word";
+import { useSQLiteContext } from "expo-sqlite";
+import { useCallback, useEffect, useState } from "react";
 
 type State = {
-  counter: number;
+  words: Word[];
 };
 
 type Action = {
-  countUp: () => void;
+  addWord: (word: Word) => void;
 };
 
-const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
-  const [counter, setCounter] = useState(0);
+export const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
+  const db = useSQLiteContext();
+  const [words, setWords] = useState<Word[]>([]);
+
+  const getWords = useCallback(async () => {
+    return await db.getAllAsync<Word>(
+      "SELECT text, translated_text_json as translatedTextJson FROM words",
+    );
+  }, [db]);
+
+  const addWord = useCallback(
+    async (word: Word) => {
+      try {
+        const result = await db.runAsync(
+          "INSERT INTO words (text, translated_text_json) VALUES (?, ?)",
+          word.text,
+          word.translatedTextJson,
+        );
+        console.log("data insert successful" + result.changes);
+        setWords((prevState) => [...prevState, word]);
+      } catch {
+        console.log("data insert failed");
+      }
+    },
+    [db],
+  );
+
+  useEffect(() => {
+    (async () => {
+      // const result = await getWords();
+      const result: Word[] = [
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+      ];
+      setWords(result);
+    })();
+  }, [getWords]);
+
   return {
     state: {
-      counter,
+      words,
     },
     action: {
-      countUp: () => setCounter((prevCount) => prevCount + 1),
+      addWord,
     },
   };
 };
