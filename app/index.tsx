@@ -1,24 +1,5 @@
-import { Text, View, StyleSheet } from "react-native";
+import AppTopPage from "@/components/screens/appTopPage/appTopPage";
 
 export default function Index() {
-  return (
-    <View
-      style={styles.container}
-    >
-      <Text style={styles.appTitle}>AIたんご帳</Text>
-    </View>
-  );
+  return <AppTopPage />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  appTitle: {
-    color: 'blue',
-    fontWeight: 'bold',
-    fontSize: 30,
-  }
-});
