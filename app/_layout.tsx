@@ -15,6 +15,13 @@ export default function RootLayout() {
       }}
     >
       <Stack.Screen name="index" options={{ title: "AIたんご帳" }} />
+      <Stack.Screen
+        name="addWordModal"
+        options={{
+          presentation: "modal",
+          title: "単語を追加",
+        }}
+      />
     </Stack>
   );
 }

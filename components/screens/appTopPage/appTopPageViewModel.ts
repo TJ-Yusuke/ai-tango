@@ -5,15 +5,19 @@ import { useCallback, useEffect, useState } from "react";
 
 type State = {
   words: Word[];
+  isAddWordModalVisible: boolean;
 };
 
 type Action = {
   addWord: (word: Word) => void;
+  setIsAddWordModalVisible: (isVisible: boolean) => void;
 };
 
 export const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
   const db = useSQLiteContext();
   const [words, setWords] = useState<Word[]>([]);
+  const [isAddWordModalVisible, setIsAddWordModalVisible] =
+    useState<boolean>(false);
 
   const getWords = useCallback(async () => {
     return await db.getAllAsync<Word>(
@@ -42,24 +46,22 @@ export const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
     (async () => {
       // const result = await getWords();
       const result: Word[] = [
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
-        { text: "continual", translatedTextJson: '["継続的な", "断続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
+        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
       ];
       setWords(result);
     })();
@@ -68,9 +70,13 @@ export const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
   return {
     state: {
       words,
+      isAddWordModalVisible,
     },
     action: {
       addWord,
+      setIsAddWordModalVisible: (isVisible) => {
+        setIsAddWordModalVisible(isVisible);
+      },
     },
   };
 };
