@@ -43,8 +43,8 @@ export const AddWordModalScreen = () => {
       style={styles.container}
     >
       <Text style={styles.title}>追加する単語を入力</Text>
+      <Text style={styles.inputLabel}>English</Text>
       <TextInput
-        label="English"
         mode="outlined"
         value={wordText}
         onChangeText={(text) => onWordTextChange(text)}
@@ -53,8 +53,22 @@ export const AddWordModalScreen = () => {
       {wordTextValidationError.length > 0 && (
         <Text>{wordTextValidationError}</Text>
       )}
+      <Text style={styles.inputLabel}>Japanese</Text>
+      {translatedWordsList.length > 0 && (
+        <View style={styles.chipContainer}>
+          {translatedWordsList.map((value, i) => (
+            <Chip
+              style={styles.chip}
+              mode="outlined"
+              onClose={() => deleteTranslatedWordItemFromList(value)}
+              key={i}
+            >
+              {value}
+            </Chip>
+          ))}
+        </View>
+      )}
       <TextInput
-        label="Japanese"
         mode="outlined"
         value={translatedWordText}
         onChangeText={(text) => onTranslatedWordTextChange(text)}
@@ -68,18 +82,6 @@ export const AddWordModalScreen = () => {
       {translatedWordTextValidationError.length > 0 && (
         <Text>{translatedWordTextValidationError}</Text>
       )}
-      <View style={styles.chipContainer}>
-        {translatedWordsList.map((value, i) => (
-          <Chip
-            style={styles.chip}
-            mode="outlined"
-            onClose={() => deleteTranslatedWordItemFromList(value)}
-            key={i}
-          >
-            {value}
-          </Chip>
-        ))}
-      </View>
       <Button
         icon="plus"
         mode="contained"
@@ -90,6 +92,7 @@ export const AddWordModalScreen = () => {
             translatedWordTextValidationError.length > 0)
         }
         onPress={() => registerWord()}
+        style={styles.submitButton}
       >
         追加する
       </Button>
@@ -106,13 +109,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginVertical: 8,
+  },
   chipContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginVertical: 10, // 必要に応じてマージンを調整
+    marginBottom: 10,
   },
   chip: {
     marginHorizontal: 4,
     marginVertical: 2,
+  },
+  submitButton: {
+    marginVertical: 10,
   },
 });
