@@ -1,82 +1,44 @@
 import { ViewModelFunc } from "@/components/ViewModelFunc";
 import { Word } from "@/models/word";
-import { useSQLiteContext } from "expo-sqlite";
-import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { openDatabaseAsync } from "expo-sqlite";
+import { useCallback, useState } from "react";
 
 type State = {
   words: Word[];
-  isAddWordModalVisible: boolean;
 };
 
-type Action = {
-  addWord: (word: Word) => void;
-  setIsAddWordModalVisible: (isVisible: boolean) => void;
-};
+type Action = object;
 
 export const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
-  const db = useSQLiteContext();
   const [words, setWords] = useState<Word[]>([]);
-  const [isAddWordModalVisible, setIsAddWordModalVisible] =
-    useState<boolean>(false);
 
   const getWords = useCallback(async () => {
+    const db = await openDatabaseAsync("test.db");
     return await db.getAllAsync<Word>(
       "SELECT text, translated_text_json as translatedTextJson FROM words",
     );
-  }, [db]);
+  }, []);
 
-  const addWord = useCallback(
-    async (word: Word) => {
-      try {
-        const result = await db.runAsync(
-          "INSERT INTO words (text, translated_text_json) VALUES (?, ?)",
-          word.text,
-          word.translatedTextJson,
-        );
-        console.log("data insert successful" + result.changes);
-        setWords((prevState) => [...prevState, word]);
-      } catch {
-        console.log("data insert failed");
-      }
-    },
-    [db],
+  useFocusEffect(
+    useCallback(() => {
+      console.log("ここは走っている");
+      (async () => {
+        try {
+          const result = await getWords();
+          setWords(result);
+        } catch (error) {
+          console.error("error occurred: ", error);
+        }
+      })();
+      return () => {};
+    }, [getWords]),
   );
-
-  useEffect(() => {
-    (async () => {
-      // const result = await getWords();
-      const result: Word[] = [
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-        { text: "continual", translatedTextJson: '["断続的な", "継続的な"]' },
-      ];
-      setWords(result);
-    })();
-  }, [getWords]);
 
   return {
     state: {
       words,
-      isAddWordModalVisible,
     },
-    action: {
-      addWord,
-      setIsAddWordModalVisible: (isVisible) => {
-        setIsAddWordModalVisible(isVisible);
-      },
-    },
+    action: {},
   };
 };

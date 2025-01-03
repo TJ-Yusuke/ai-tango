@@ -1,12 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+import React from "react";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { FAB } from "react-native-paper";
 import { useAppTopPageViewModel } from "./appTopPageViewModel";
 import { WordCard } from "@/components/wordCard";
@@ -14,8 +7,7 @@ import { useRouter } from "expo-router";
 
 const AppTopPage = () => {
   const {
-    state: { words, isAddWordModalVisible },
-    action: { addWord, setIsAddWordModalVisible },
+    state: { words },
   } = useAppTopPageViewModel();
 
   const router = useRouter();
