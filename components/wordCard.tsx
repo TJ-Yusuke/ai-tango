@@ -43,6 +43,5 @@ const styles = StyleSheet.create({
   japaneseText: {
     fontSize: 18,
     color: "#666666",
-    marginBottom: 8,
   },
 });
