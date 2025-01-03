@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     margin: 16,
     bottom: 56,
     right: 24,
-    backgroundColor: "#4A90E2",
+    backgroundColor: "#3498db",
   },
   addWordModal: {
     backgroundColor: "white",

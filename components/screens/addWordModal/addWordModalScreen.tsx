@@ -42,7 +42,7 @@ export const AddWordModalScreen = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
-      <Text style={styles.title}>単語追加画面</Text>
+      <Text style={styles.title}>追加する単語を入力</Text>
       <TextInput
         label="English"
         mode="outlined"
@@ -50,6 +50,9 @@ export const AddWordModalScreen = () => {
         onChangeText={(text) => onWordTextChange(text)}
         error={wordTextValidationError.length > 0}
       />
+      {wordTextValidationError.length > 0 && (
+        <Text>{wordTextValidationError}</Text>
+      )}
       <TextInput
         label="Japanese"
         mode="outlined"

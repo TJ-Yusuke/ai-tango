@@ -59,6 +59,7 @@ export const useAddWordModalScreenViewModel: ViewModelFunc<
     // バリデーション
     if (await isWordAlreadyRegistered(wordText)) {
       setWordTextValidationError("すでに登録されています");
+      return;
     }
     // db登録
     try {
@@ -85,6 +86,7 @@ export const useAddWordModalScreenViewModel: ViewModelFunc<
     },
     action: {
       onWordTextChange: (value) => {
+        setWordTextValidationError("");
         setWordText(value);
       },
       onTranslatedWordTextChange: (value) => {
