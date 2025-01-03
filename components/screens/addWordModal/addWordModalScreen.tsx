@@ -59,7 +59,7 @@ export const AddWordModalScreen = () => {
         onSubmitEditing={() => {
           addTranslatedWordsList();
         }}
-        submitBehavior="blurAndSubmit"
+        submitBehavior="submit"
         error={translatedWordTextValidationError.length > 0}
       />
       {translatedWordTextValidationError.length > 0 && (

@@ -1,7 +1,7 @@
 import { ViewModelFunc } from "@/components/ViewModelFunc";
 import { Word } from "@/models/word";
 import { useFocusEffect } from "@react-navigation/native";
-import { openDatabaseAsync } from "expo-sqlite";
+import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
 
 type State = {
@@ -11,18 +11,17 @@ type State = {
 type Action = object;
 
 export const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
+  const db = useSQLiteContext();
   const [words, setWords] = useState<Word[]>([]);
 
   const getWords = useCallback(async () => {
-    const db = await openDatabaseAsync("test.db");
     return await db.getAllAsync<Word>(
       "SELECT text, translated_text_json as translatedTextJson FROM words",
     );
-  }, []);
+  }, [db]);
 
   useFocusEffect(
     useCallback(() => {
-      console.log("ここは走っている");
       (async () => {
         try {
           const result = await getWords();
