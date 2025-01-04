@@ -24,7 +24,6 @@ const AppTopPage = () => {
     setIsExtended(currentScrollPosition <= 0);
   };
   const animateFrom = "right";
-  const fabStyle = { [animateFrom]: 16 };
 
   const router = useRouter();
 
