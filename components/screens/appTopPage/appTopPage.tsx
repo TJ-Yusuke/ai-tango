@@ -1,6 +1,6 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, Alert } from "react-native";
-import { FAB } from "react-native-paper";
+import { View, StyleSheet, ScrollView, Alert, FlatList } from "react-native";
+import { AnimatedFAB } from "react-native-paper";
 import { useAppTopPageViewModel } from "./appTopPageViewModel";
 import { WordCard } from "@/components/wordCard";
 import { useRouter } from "expo-router";
@@ -10,6 +10,21 @@ const AppTopPage = () => {
     state: { words },
     action: { deleteWordByText },
   } = useAppTopPageViewModel();
+
+  const [isExtended, setIsExtended] = React.useState(true);
+
+  const onScroll = ({
+    nativeEvent,
+  }: {
+    nativeEvent: { contentOffset: { y: number } };
+  }) => {
+    const currentScrollPosition =
+      Math.floor(nativeEvent?.contentOffset?.y) ?? 0;
+
+    setIsExtended(currentScrollPosition <= 0);
+  };
+  const animateFrom = "right";
+  const fabStyle = { [animateFrom]: 16 };
 
   const router = useRouter();
 
@@ -33,20 +48,27 @@ const AppTopPage = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        {words.map((word, i) => (
+      <FlatList
+        style={styles.scrollView}
+        data={words}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
           <WordCard
-            word={word}
-            key={i}
+            word={item}
             onDeleteClick={(wordText) => openDeleteAlert(wordText)}
           />
-        ))}
-      </ScrollView>
-      <FAB
-        style={styles.fab}
-        icon="plus"
+        )}
+        onScroll={onScroll}
+      />
+      <AnimatedFAB
+        icon="dumbbell"
+        label="学習する"
         color="white"
-        onPress={() => router.push("/addWordModal")}
+        extended={isExtended}
+        onPress={() => console.log("Pressed")}
+        animateFrom={animateFrom}
+        iconMode="dynamic"
+        style={[styles.fab]}
       />
     </View>
   );
@@ -65,7 +87,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     margin: 16,
     bottom: 56,
-    right: 24,
+    right: 20,
     backgroundColor: "#3498db",
   },
   addWordModal: {

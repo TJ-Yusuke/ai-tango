@@ -1,7 +1,8 @@
 import { migrateDbIfNeeded } from "@/db/init";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
-import { MD3LightTheme, PaperProvider } from "react-native-paper";
+import { Button, View } from "react-native";
+import { IconButton, MD3LightTheme, PaperProvider } from "react-native-paper";
 
 const theme = {
   ...MD3LightTheme, // or MD3DarkTheme
@@ -30,7 +31,30 @@ export default function RootLayout() {
             },
           }}
         >
-          <Stack.Screen name="index" options={{ title: "AIたんご帳" }} />
+          <Stack.Screen
+            name="index"
+            options={{
+              title: "AIたんご帳",
+              headerRight: () => (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <IconButton
+                    icon="plus"
+                    iconColor="white"
+                    size={25}
+                    style={{
+                      marginTop: 0,
+                    }}
+                    onPress={() => router.push("/addWordModal")}
+                  />
+                </View>
+              ),
+            }}
+          />
           <Stack.Screen
             name="addWordModal"
             options={{
