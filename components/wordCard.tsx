@@ -1,23 +1,41 @@
 import { Word } from "@/models/word";
 import { useMemo } from "react";
 import { Text, View, StyleSheet } from "react-native";
+import { IconButton } from "react-native-paper";
 
-export const WordCard = ({ word }: { word: Word }) => {
+type WordCardProps = {
+  word: Word;
+  onDeleteClick: (wordText: string) => void;
+};
+
+export const WordCard = ({ word, onDeleteClick }: WordCardProps) => {
   const translatedText = useMemo(() => {
     console.log(word.translatedTextJson);
     const textList = JSON.parse(word.translatedTextJson) as string[];
     return textList.join(", ");
   }, [word.translatedTextJson]);
+
   return (
     <View style={styles.card}>
-      <Text style={styles.englishText}>{word.text}</Text>
-      <Text style={styles.japaneseText}>{translatedText}</Text>
+      <View style={styles.textContainer}>
+        <Text style={styles.englishText}>{word.text}</Text>
+        <Text style={styles.japaneseText}>{translatedText}</Text>
+      </View>
+      <IconButton
+        icon="trash-can-outline"
+        size={20}
+        style={styles.deleteButton}
+        onPress={() => onDeleteClick(word.text)}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     backgroundColor: "#ffffff",
     borderRadius: 12,
     padding: 16,
@@ -33,6 +51,12 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     // Androidのシャドウ
     elevation: 4,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  deleteButton: {
+    width: 20,
   },
   englishText: {
     fontSize: 18,

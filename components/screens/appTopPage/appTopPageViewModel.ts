@@ -8,7 +8,9 @@ type State = {
   words: Word[];
 };
 
-type Action = object;
+type Action = {
+  deleteWordByText: (value: string) => void;
+};
 
 export const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
   const db = useSQLiteContext();
@@ -19,6 +21,22 @@ export const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
       "SELECT text, translated_text_json as translatedTextJson FROM words",
     );
   }, [db]);
+
+  const deleteWordByText = useCallback(
+    async (wordText: string) => {
+      try {
+        await db.runAsync("DELETE FROM words WHERE text = $value", {
+          $value: wordText,
+        });
+        setWords((prevState) =>
+          prevState.filter((item) => item.text !== wordText),
+        );
+      } catch (error) {
+        console.error(`error occurred: ${error}`);
+      }
+    },
+    [db],
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -38,6 +56,8 @@ export const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
     state: {
       words,
     },
-    action: {},
+    action: {
+      deleteWordByText,
+    },
   };
 };

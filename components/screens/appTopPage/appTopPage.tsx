@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Alert } from "react-native";
 import { FAB } from "react-native-paper";
 import { useAppTopPageViewModel } from "./appTopPageViewModel";
 import { WordCard } from "@/components/wordCard";
@@ -8,15 +8,38 @@ import { useRouter } from "expo-router";
 const AppTopPage = () => {
   const {
     state: { words },
+    action: { deleteWordByText },
   } = useAppTopPageViewModel();
 
   const router = useRouter();
+
+  const openDeleteAlert = (text: string) => {
+    Alert.alert(
+      `「${text}」を削除しますか？`,
+      "単語に関連する情報も削除されます",
+      [
+        {
+          text: "Back",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => deleteWordByText(text),
+        },
+      ],
+    );
+  };
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         {words.map((word, i) => (
-          <WordCard word={word} key={i} />
+          <WordCard
+            word={word}
+            key={i}
+            onDeleteClick={(wordText) => openDeleteAlert(wordText)}
+          />
         ))}
       </ScrollView>
       <FAB
