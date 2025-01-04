@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, Alert, FlatList } from "react-native";
+import { View, StyleSheet, Alert, FlatList } from "react-native";
 import { AnimatedFAB } from "react-native-paper";
 import { useAppTopPageViewModel } from "./appTopPageViewModel";
 import { WordCard } from "@/components/wordCard";
@@ -64,7 +64,7 @@ const AppTopPage = () => {
         label="学習する"
         color="white"
         extended={isExtended}
-        onPress={() => console.log("Pressed")}
+        onPress={() => router.push("/learn")}
         animateFrom={animateFrom}
         iconMode="dynamic"
         style={[styles.fab]}

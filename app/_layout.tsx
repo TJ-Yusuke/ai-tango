@@ -1,7 +1,7 @@
 import { migrateDbIfNeeded } from "@/db/init";
 import { router, Stack } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
-import { Button, View } from "react-native";
+import { View } from "react-native";
 import { IconButton, MD3LightTheme, PaperProvider } from "react-native-paper";
 
 const theme = {
@@ -60,6 +60,12 @@ export default function RootLayout() {
             options={{
               presentation: "modal",
               title: "単語を追加",
+            }}
+          />
+          <Stack.Screen
+            name="learn"
+            options={{
+              title: "例文を解こう",
             }}
           />
         </Stack>
