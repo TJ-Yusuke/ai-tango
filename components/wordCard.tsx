@@ -24,7 +24,6 @@ export const WordCard = ({ word, onDeleteClick }: WordCardProps) => {
       <IconButton
         icon="trash-can-outline"
         size={20}
-        style={styles.deleteButton}
         onPress={() => onDeleteClick(word.text)}
       />
     </View>
@@ -39,6 +38,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 12,
     padding: 16,
+    paddingRight: 4,
     marginHorizontal: 16,
     marginVertical: 8,
     // iOSのシャドウ
@@ -54,9 +54,6 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-  },
-  deleteButton: {
-    width: 20,
   },
   englishText: {
     fontSize: 18,
