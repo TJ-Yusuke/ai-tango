@@ -66,6 +66,8 @@ export default function RootLayout() {
             name="learn"
             options={{
               title: "例文を解こう",
+              headerBackButtonDisplayMode: "minimal",
+              headerTintColor: "white",
             }}
           />
         </Stack>
