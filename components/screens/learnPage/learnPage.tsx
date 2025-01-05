@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { ProgressBar, Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 // 型定義
 interface Option {
@@ -30,6 +31,8 @@ const SentenceQuiz: React.FC = () => {
   const [showResult, setShowResult] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [addedWords, setAddedWords] = useState<Set<string>>(new Set());
+
+  const router = useRouter();
 
   const questions: Question[] = [
     {
@@ -75,8 +78,7 @@ const SentenceQuiz: React.FC = () => {
   };
 
   const handleFinish = () => {
-    // 終了処理。ここに必要なロジックを追加可能（例: 結果画面への遷移）
-    console.log("Quiz Finished!");
+    router.dismiss();
   };
 
   const handleAddToVocabulary = (word: string) => {
@@ -199,9 +201,11 @@ const SentenceQuiz: React.FC = () => {
             /* わからないボタン */
             <TouchableOpacity
               onPress={handleIDontKnow}
-              style={styles.fullWidthButton}
+              style={[styles.fullWidthButton, styles.outlinedButton]} // Outlinedスタイルを適用
             >
-              <Text style={styles.buttonText}>わからない</Text>
+              <Text style={[styles.buttonText, styles.outlinedButtonText]}>
+                わからない
+              </Text>
             </TouchableOpacity>
           ) : isLastQuestion ? (
             /* 問題を終了するボタン（最後の問題の場合） */
@@ -345,6 +349,17 @@ const styles = StyleSheet.create({
     alignItems: "center", // 横方向中央揃え
     width: "100%", // 幅を親の幅全体に設定
     borderRadius: 8, // ボタンの角丸
+  },
+  outlinedButton: {
+    backgroundColor: "transparent", // 背景を透明に設定
+    borderWidth: 1, // 枠線の太さ
+    borderColor: "#3498db", // 枠線の色
+    borderRadius: 5, // 角の丸み（必要に応じて調整）
+  },
+  outlinedButtonText: {
+    color: "#3498db", // 枠線と同じ色でテキストを設定
+    fontSize: 16, // テキストサイズ（必要に応じて調整）
+    fontWeight: "bold", // 太字（必要に応じて調整）
   },
   nextButton: {
     backgroundColor: "#3498db", // 次の問題へ: 通常のボタン色
