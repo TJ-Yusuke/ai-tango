@@ -11,7 +11,6 @@ import { ProgressBar, Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
-// 型定義
 interface Option {
   id: string;
   word: string;
