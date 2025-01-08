@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -10,19 +10,7 @@ import {
 import { ProgressBar, Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-
-interface Option {
-  id: string;
-  word: string;
-  translation: string;
-}
-
-interface Question {
-  sentence: string;
-  options: Option[];
-  correctAnswer: string;
-  targetWord: string;
-}
+import { trpc } from "@/trpc";
 
 const SentenceQuiz: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
@@ -33,39 +21,12 @@ const SentenceQuiz: React.FC = () => {
 
   const router = useRouter();
 
-  const questions: Question[] = [
-    {
-      sentence: "I need to _____ this document before sending it.",
-      options: [
-        { id: "A", word: "review", translation: "レビューする、確認する" },
-        { id: "B", word: "contain", translation: "含む、収容する" },
-        {
-          id: "C",
-          word: "mention",
-          translation: "言及する、述べる",
-        },
-        { id: "D", word: "describe", translation: "説明する、描写する" },
-      ],
-      correctAnswer: "review",
-      targetWord: "review",
-    },
-    {
-      sentence: "She plans to _____ the meeting tomorrow.",
-      options: [
-        { id: "A", word: "reschedule", translation: "再調整する" },
-        { id: "B", word: "attend", translation: "出席する" },
-        { id: "C", word: "cancel", translation: "キャンセルする" },
-        { id: "D", word: "present", translation: "発表する" },
-      ],
-      correctAnswer: "attend",
-      targetWord: "attend",
-    },
-  ];
+  const { data, isLoading, error } = trpc.getQuestions.useQuery();
 
   const handleAnswerSelect = (answer: string) => {
     setSelectedAnswer(answer);
     setShowResult(true);
-    if (answer === questions[currentQuestionIndex].correctAnswer) {
+    if (data != undefined && answer === data[currentQuestionIndex].correctAnswer) {
       setScore(score + 1);
     }
   };
@@ -90,26 +51,42 @@ const SentenceQuiz: React.FC = () => {
     setShowResult(true);
   };
 
-  const currentQuestion = questions[currentQuestionIndex];
-  const isLastQuestion = currentQuestionIndex === questions.length - 1; // 最後の問題かどうか
+  const currentQuestion = useMemo(() => {
+    if (data != undefined) {
+      return data[currentQuestionIndex]
+    }}, [data]);
+
+  const isLastQuestion = useMemo(() => {
+    if (data != undefined) {
+      return currentQuestionIndex === data.length - 1
+    } else return false
+  }, [data]);
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text>Error: {error.message}</Text>;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.flexContainer}>
         {/* スクロール可能なコンテンツ */}
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {/* ヘッダー */}
-          <View>
+          {data != undefined && currentQuestion != undefined ? (
+            <View>
             <View style={styles.header}>
               <Text style={styles.headerTitle}>例文問題</Text>
               <Text style={styles.headerSubtitle}>
-                {currentQuestionIndex + 1} / {questions.length}問目
+                {currentQuestionIndex + 1} / {data.length}問目
               </Text>
             </View>
 
             {/* プログレスバー */}
             <ProgressBar
-              progress={currentQuestionIndex / questions.length}
+              progress={currentQuestionIndex / data.length}
               color="#6200ee"
               style={styles.progressBar}
             />
@@ -192,6 +169,8 @@ const SentenceQuiz: React.FC = () => {
               )}
             </View>
           </View>
+          ) : null}
+          
         </ScrollView>
 
         {/* フッター */}

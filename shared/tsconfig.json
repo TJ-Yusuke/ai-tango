@@ -1,6 +1,12 @@
 {
   "compilerOptions": {
-    "rootDir": ".",
+    "rootDir": "../",
     "outDir": "dist"
-  }
+  },
+  "include": [
+    "../**/*",
+  ],
+  "exclude": [
+    "dist"  // distディレクトリを除外
+  ]
 }
