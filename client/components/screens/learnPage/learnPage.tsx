@@ -21,7 +21,7 @@ const SentenceQuiz: React.FC = () => {
 
   const router = useRouter();
 
-  const { data, isLoading, error } = trpc.getQuestions.useQuery();
+  const { data, isLoading, error } = trpc.getQuestions.useQuery(["a", "a"]);
 
   const handleAnswerSelect = (answer: string) => {
     setSelectedAnswer(answer);
