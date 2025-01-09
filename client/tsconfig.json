@@ -7,8 +7,8 @@
       "@/*": [
         "./*"
       ],
-      "@shared/*": [
-        "../../packages/shared/*"
+      "@shared/": [
+        "../shared/*"
       ]
     }
   },

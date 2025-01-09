@@ -17,6 +17,9 @@
         "backgroundColor": "#ffffff"
       }
     },
+    "androidStatusBar": {
+      "backgroundColor": "#3498db"
+    },
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -30,7 +33,7 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#3498db"
         }
       ],
       "expo-sqlite"

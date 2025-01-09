@@ -26,7 +26,10 @@ const SentenceQuiz: React.FC = () => {
   const handleAnswerSelect = (answer: string) => {
     setSelectedAnswer(answer);
     setShowResult(true);
-    if (data != undefined && answer === data[currentQuestionIndex].correctAnswer) {
+    if (
+      data !== undefined &&
+      answer === data[currentQuestionIndex].correctAnswer
+    ) {
       setScore(score + 1);
     }
   };
@@ -52,15 +55,16 @@ const SentenceQuiz: React.FC = () => {
   };
 
   const currentQuestion = useMemo(() => {
-    if (data != undefined) {
-      return data[currentQuestionIndex]
-    }}, [data]);
+    if (data !== undefined) {
+      return data[currentQuestionIndex];
+    }
+  }, [currentQuestionIndex, data]);
 
   const isLastQuestion = useMemo(() => {
-    if (data != undefined) {
-      return currentQuestionIndex === data.length - 1
-    } else return false
-  }, [data]);
+    if (data !== undefined) {
+      return currentQuestionIndex === data.length - 1;
+    } else return false;
+  }, [currentQuestionIndex, data]);
 
   if (isLoading) {
     return <Text>Loading...</Text>;
@@ -77,100 +81,100 @@ const SentenceQuiz: React.FC = () => {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           {data != undefined && currentQuestion != undefined ? (
             <View>
-            <View style={styles.header}>
-              <Text style={styles.headerTitle}>例文問題</Text>
-              <Text style={styles.headerSubtitle}>
-                {currentQuestionIndex + 1} / {data.length}問目
-              </Text>
-            </View>
+              <View style={styles.header}>
+                <Text style={styles.headerTitle}>例文問題</Text>
+                <Text style={styles.headerSubtitle}>
+                  {currentQuestionIndex + 1} / {data.length}問目
+                </Text>
+              </View>
 
-            {/* プログレスバー */}
-            <ProgressBar
-              progress={currentQuestionIndex / data.length}
-              color="#6200ee"
-              style={styles.progressBar}
-            />
+              {/* プログレスバー */}
+              <ProgressBar
+                progress={currentQuestionIndex / data.length}
+                color="#6200ee"
+                style={styles.progressBar}
+              />
 
-            {/* 問題カード */}
-            <View style={styles.card}>
-              <Text style={styles.sentence}>{currentQuestion.sentence}</Text>
-              {currentQuestion.options.map((option) => (
-                <TouchableOpacity
-                  key={option.id}
-                  style={[
-                    styles.option,
-                    showResult && option.word === currentQuestion.correctAnswer
-                      ? styles.correctOption
-                      : showResult && selectedAnswer === option.word
-                        ? styles.incorrectOption
-                        : styles.defaultOption,
-                  ]}
-                  disabled={showResult}
-                  onPress={() => handleAnswerSelect(option.word)}
-                >
-                  <View style={styles.optionContent}>
-                    <View style={styles.textContainer}>
-                      <Text style={styles.optionText}>{option.word}</Text>
-                      {(showResult || selectedAnswer === option.word) && (
-                        <Text style={styles.translationText}>
-                          {option.translation}
-                        </Text>
-                      )}
+              {/* 問題カード */}
+              <View style={styles.card}>
+                <Text style={styles.sentence}>{currentQuestion.sentence}</Text>
+                {currentQuestion.options.map((option) => (
+                  <TouchableOpacity
+                    key={option.id}
+                    style={[
+                      styles.option,
+                      showResult &&
+                      option.word === currentQuestion.correctAnswer
+                        ? styles.correctOption
+                        : showResult && selectedAnswer === option.word
+                          ? styles.incorrectOption
+                          : styles.defaultOption,
+                    ]}
+                    disabled={showResult}
+                    onPress={() => handleAnswerSelect(option.word)}
+                  >
+                    <View style={styles.optionContent}>
+                      <View style={styles.textContainer}>
+                        <Text style={styles.optionText}>{option.word}</Text>
+                        {(showResult || selectedAnswer === option.word) && (
+                          <Text style={styles.translationText}>
+                            {option.translation}
+                          </Text>
+                        )}
+                      </View>
+                      {showResult &&
+                        option.word !== currentQuestion.correctAnswer && (
+                          <Button
+                            mode="outlined"
+                            compact
+                            onPress={() => handleAddToVocabulary(option.word)}
+                            disabled={addedWords.has(option.word)}
+                            style={styles.addButton}
+                          >
+                            {addedWords.has(option.word)
+                              ? "追加済み"
+                              : "単語帳に追加"}
+                          </Button>
+                        )}
                     </View>
-                    {showResult &&
-                      option.word !== currentQuestion.correctAnswer && (
-                        <Button
-                          mode="outlined"
-                          compact
-                          onPress={() => handleAddToVocabulary(option.word)}
-                          disabled={addedWords.has(option.word)}
-                          style={styles.addButton}
-                        >
-                          {addedWords.has(option.word)
-                            ? "追加済み"
-                            : "単語帳に追加"}
-                        </Button>
+                  </TouchableOpacity>
+                ))}
+                {showResult && (
+                  <View style={styles.resultContainer}>
+                    <View style={styles.resultMessage}>
+                      {selectedAnswer === currentQuestion.correctAnswer ? (
+                        <MaterialIcons
+                          name="check-circle"
+                          size={24}
+                          color="green"
+                        />
+                      ) : (
+                        <MaterialIcons name="error" size={24} color="red" />
                       )}
+                      <Text style={styles.resultText}>
+                        {selectedAnswer === currentQuestion.correctAnswer
+                          ? "正解です！"
+                          : `不正解です。正解は "${currentQuestion.correctAnswer}" でした。`}
+                      </Text>
+                    </View>
+                    <View style={styles.explanation}>
+                      <Text style={styles.explanationTitle}>解説:</Text>
+                      <Text style={styles.explanationText}>
+                        "{currentQuestion.targetWord}" は「
+                        {
+                          currentQuestion.options.find(
+                            (o) => o.word === currentQuestion.targetWord,
+                          )?.translation
+                        }
+                        」という意味です。
+                        この文脈では、書類を送る前に確認する必要があるという意味で使われています。
+                      </Text>
+                    </View>
                   </View>
-                </TouchableOpacity>
-              ))}
-              {showResult && (
-                <View style={styles.resultContainer}>
-                  <View style={styles.resultMessage}>
-                    {selectedAnswer === currentQuestion.correctAnswer ? (
-                      <MaterialIcons
-                        name="check-circle"
-                        size={24}
-                        color="green"
-                      />
-                    ) : (
-                      <MaterialIcons name="error" size={24} color="red" />
-                    )}
-                    <Text style={styles.resultText}>
-                      {selectedAnswer === currentQuestion.correctAnswer
-                        ? "正解です！"
-                        : `不正解です。正解は "${currentQuestion.correctAnswer}" でした。`}
-                    </Text>
-                  </View>
-                  <View style={styles.explanation}>
-                    <Text style={styles.explanationTitle}>解説:</Text>
-                    <Text style={styles.explanationText}>
-                      "{currentQuestion.targetWord}" は「
-                      {
-                        currentQuestion.options.find(
-                          (o) => o.word === currentQuestion.targetWord,
-                        )?.translation
-                      }
-                      」という意味です。
-                      この文脈では、書類を送る前に確認する必要があるという意味で使われています。
-                    </Text>
-                  </View>
-                </View>
-              )}
+                )}
+              </View>
             </View>
-          </View>
           ) : null}
-          
         </ScrollView>
 
         {/* フッター */}

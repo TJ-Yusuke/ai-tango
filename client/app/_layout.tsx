@@ -1,10 +1,11 @@
 import { migrateDbIfNeeded } from "../db/init";
-import { router, Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
-import { View } from "react-native";
-import { IconButton, MD3LightTheme, PaperProvider } from "react-native-paper";
+import { TouchableOpacity, View } from "react-native";
+import { MD3LightTheme, PaperProvider } from "react-native-paper";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import client, { trpc } from "../trpc";
+import { Ionicons } from "@expo/vector-icons";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const theme = {
 };
 
 function RootLayout() {
+  const router = useRouter();
   return (
     <QueryClientProvider client={queryClient}>
       <trpc.Provider client={client} queryClient={queryClient}>
@@ -48,15 +50,13 @@ function RootLayout() {
                         alignItems: "center",
                       }}
                     >
-                      <IconButton
-                        icon="plus"
-                        iconColor="white"
-                        size={25}
-                        style={{
-                          marginTop: 0,
+                      <TouchableOpacity
+                        onPress={() => {
+                          router.push("/addWordModal");
                         }}
-                        onPress={() => router.push("/addWordModal")}
-                      />
+                      >
+                        <Ionicons name="add" size={30} color="white" />
+                      </TouchableOpacity>
                     </View>
                   ),
                 }}

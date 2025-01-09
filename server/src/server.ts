@@ -34,6 +34,94 @@ const appRouter = t.router({
         correctAnswer: "attend",
         targetWord: "attend",
       },
+      {
+        sentence: "She plans to _____ the meeting tomorrow.",
+        options: [
+          { id: "A", word: "reschedule", translation: "再調整する" },
+          { id: "B", word: "attend", translation: "出席する" },
+          { id: "C", word: "cancel", translation: "キャンセルする" },
+          { id: "D", word: "present", translation: "発表する" },
+        ],
+        correctAnswer: "attend",
+        targetWord: "attend",
+      },
+      {
+        sentence: "She plans to _____ the meeting tomorrow.",
+        options: [
+          { id: "A", word: "reschedule", translation: "再調整する" },
+          { id: "B", word: "attend", translation: "出席する" },
+          { id: "C", word: "cancel", translation: "キャンセルする" },
+          { id: "D", word: "present", translation: "発表する" },
+        ],
+        correctAnswer: "attend",
+        targetWord: "attend",
+      },
+      {
+        sentence: "She plans to _____ the meeting tomorrow.",
+        options: [
+          { id: "A", word: "reschedule", translation: "再調整する" },
+          { id: "B", word: "attend", translation: "出席する" },
+          { id: "C", word: "cancel", translation: "キャンセルする" },
+          { id: "D", word: "present", translation: "発表する" },
+        ],
+        correctAnswer: "attend",
+        targetWord: "attend",
+      },
+      {
+        sentence: "She plans to _____ the meeting tomorrow.",
+        options: [
+          { id: "A", word: "reschedule", translation: "再調整する" },
+          { id: "B", word: "attend", translation: "出席する" },
+          { id: "C", word: "cancel", translation: "キャンセルする" },
+          { id: "D", word: "present", translation: "発表する" },
+        ],
+        correctAnswer: "attend",
+        targetWord: "attend",
+      },
+      {
+        sentence: "She plans to _____ the meeting tomorrow.",
+        options: [
+          { id: "A", word: "reschedule", translation: "再調整する" },
+          { id: "B", word: "attend", translation: "出席する" },
+          { id: "C", word: "cancel", translation: "キャンセルする" },
+          { id: "D", word: "present", translation: "発表する" },
+        ],
+        correctAnswer: "attend",
+        targetWord: "attend",
+      },
+      {
+        sentence: "She plans to _____ the meeting tomorrow.",
+        options: [
+          { id: "A", word: "reschedule", translation: "再調整する" },
+          { id: "B", word: "attend", translation: "出席する" },
+          { id: "C", word: "cancel", translation: "キャンセルする" },
+          { id: "D", word: "present", translation: "発表する" },
+        ],
+        correctAnswer: "attend",
+        targetWord: "attend",
+      },
+      {
+        sentence: "She plans to _____ the meeting tomorrow.",
+        options: [
+          { id: "A", word: "reschedule", translation: "再調整する" },
+          { id: "B", word: "attend", translation: "出席する" },
+          { id: "C", word: "cancel", translation: "キャンセルする" },
+          { id: "D", word: "present", translation: "発表する" },
+        ],
+        correctAnswer: "attend",
+        targetWord: "attend",
+      },
+      {
+        sentence: "She plans to _____ the meeting tomorrow.",
+        options: [
+          { id: "A", word: "reschedule", translation: "再調整する" },
+          { id: "B", word: "attend", translation: "出席する" },
+          { id: "C", word: "cancel", translation: "キャンセルする" },
+          { id: "D", word: "present", translation: "発表する" },
+        ],
+        correctAnswer: "attend",
+        targetWord: "attend",
+      },
     ];
     return questions;
   }),
