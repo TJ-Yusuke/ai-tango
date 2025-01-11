@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, Alert, FlatList } from "react-native";
 import { AnimatedFAB } from "react-native-paper";
 import { useAppTopPageViewModel } from "./appTopPageViewModel";
-import { WordCard } from "@/components/wordCard";
+import { WordCard } from "../../../components/wordCard";
 import { useRouter } from "expo-router";
 
 const AppTopPage = () => {

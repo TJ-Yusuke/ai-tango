@@ -1,5 +1,5 @@
-import { ViewModelFunc } from "@/components/ViewModelFunc";
-import { Word } from "@/models/word";
+import { ViewModelFunc } from "../../../components/ViewModelFunc";
+import { Word } from "../../../models/word";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";

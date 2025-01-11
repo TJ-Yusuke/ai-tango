@@ -3,14 +3,6 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@shared/": [
-        "../shared/*"
-      ]
-    }
   },
   "include": [
     "**/*.ts",
