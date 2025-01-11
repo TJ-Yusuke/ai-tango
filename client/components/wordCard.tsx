@@ -1,4 +1,4 @@
-import { Word } from "@/models/word";
+import { Word } from "../models/word";
 import { useMemo } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { IconButton } from "react-native-paper";

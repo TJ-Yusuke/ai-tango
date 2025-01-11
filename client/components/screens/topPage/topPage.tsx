@@ -1,15 +1,15 @@
 import React from "react";
 import { View, StyleSheet, Alert, FlatList } from "react-native";
 import { AnimatedFAB } from "react-native-paper";
-import { useAppTopPageViewModel } from "./appTopPageViewModel";
-import { WordCard } from "../../../components/wordCard";
+import { useTopPageViewModel } from "./topPageViewModel";
+import { WordCard } from "../../wordCard";
 import { useRouter } from "expo-router";
 
-const AppTopPage = () => {
+const TopPage = () => {
   const {
     state: { words },
     action: { deleteWordByText },
-  } = useAppTopPageViewModel();
+  } = useTopPageViewModel();
 
   const [isExtended, setIsExtended] = React.useState(true);
 
@@ -96,4 +96,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AppTopPage;
+export default TopPage;

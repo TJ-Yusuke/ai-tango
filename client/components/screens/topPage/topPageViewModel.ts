@@ -1,4 +1,4 @@
-import { ViewModelFunc } from "../../../components/ViewModelFunc";
+import { ViewModelFunc } from "../../ViewModelFunc";
 import { Word } from "../../../models/word";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -16,7 +16,7 @@ type Action = {
   deleteWordByText: (value: string) => void;
 };
 
-export const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
+export const useTopPageViewModel: ViewModelFunc<State, Action> = () => {
   const db = useSQLiteContext();
   const [words, setWords] = useState<Word[]>([]);
 

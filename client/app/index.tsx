@@ -1,5 +1,5 @@
-import AppTopPage from "../components/screens/appTopPage/appTopPage";
+import TopPage from "../components/screens/topPage/topPage";
 
 export default function Index() {
-  return <AppTopPage />;
+  return <TopPage />;
 }
