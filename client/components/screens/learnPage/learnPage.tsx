@@ -10,7 +10,7 @@ import {
 import { ProgressBar, Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { trpc } from "@/trpc";
+import { trpc } from "../../../trpc";
 
 const SentenceQuiz: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);

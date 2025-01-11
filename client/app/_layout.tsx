@@ -51,11 +51,11 @@ function RootLayout() {
                       }}
                     >
                       <TouchableOpacity
-                        onPress={() => {
+                        onPressIn={() => {
                           router.push("/addWordModal");
                         }}
                       >
-                        <Ionicons name="add" size={30} color="white" />
+                        <Ionicons name="add" size={36} color="white" />
                       </TouchableOpacity>
                     </View>
                   ),
