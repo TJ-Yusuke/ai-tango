@@ -1,4 +1,8 @@
-import { ViewModelFunc } from "@/components/ViewModelFunc";
+import {
+  isWordAlreadyExists,
+  registerWord as registerWordToDb,
+} from "../../../db/db";
+import { ViewModelFunc } from "../../../components/ViewModelFunc";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
 
@@ -45,13 +49,7 @@ export const useAddWordModalScreenViewModel: ViewModelFunc<
   const [isDone, setIsDone] = useState<boolean>(false);
 
   const isWordAlreadyRegistered = useCallback(
-    async (wordText: string) => {
-      const result = await db.getAllAsync<{ count: number }>(
-        "SELECT COUNT(*) as count FROM words WHERE text = ?",
-        [wordText],
-      );
-      return result[0]?.count > 0;
-    },
+    async (wordText: string) => await isWordAlreadyExists(db, wordText),
     [db],
   );
 
@@ -63,11 +61,7 @@ export const useAddWordModalScreenViewModel: ViewModelFunc<
     }
     // db登録
     try {
-      await db.runAsync(
-        "INSERT INTO words (text, translated_text_json) VALUES (?, ?)",
-        wordText,
-        JSON.stringify(translatedWordsList), // translatedWordsListをJSON形式で保存
-      );
+      await registerWordToDb(db, { wordText, translatedWordsList });
       // uiに通知
       setIsDone(true);
     } catch (error) {

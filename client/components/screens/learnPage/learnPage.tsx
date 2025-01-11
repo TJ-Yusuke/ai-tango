@@ -77,9 +77,8 @@ const SentenceQuiz: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.flexContainer}>
-        {/* スクロール可能なコンテンツ */}
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {data != undefined && currentQuestion != undefined ? (
+          {data !== undefined && currentQuestion !== undefined ? (
             <View>
               <View style={styles.header}>
                 <Text style={styles.headerTitle}>例文問題</Text>

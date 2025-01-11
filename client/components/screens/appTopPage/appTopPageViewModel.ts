@@ -1,6 +1,10 @@
 import { ViewModelFunc } from "../../../components/ViewModelFunc";
 import { Word } from "../../../models/word";
 import { useFocusEffect } from "@react-navigation/native";
+import {
+  deleteWordByText as deleteWordByTextFromDb,
+  getAllWords,
+} from "../../../db/db";
 import { useSQLiteContext } from "expo-sqlite";
 import { useCallback, useState } from "react";
 
@@ -17,17 +21,13 @@ export const useAppTopPageViewModel: ViewModelFunc<State, Action> = () => {
   const [words, setWords] = useState<Word[]>([]);
 
   const getWords = useCallback(async () => {
-    return await db.getAllAsync<Word>(
-      "SELECT text, translated_text_json as translatedTextJson FROM words",
-    );
+    return await getAllWords(db);
   }, [db]);
 
   const deleteWordByText = useCallback(
     async (wordText: string) => {
       try {
-        await db.runAsync("DELETE FROM words WHERE text = $value", {
-          $value: wordText,
-        });
+        await deleteWordByTextFromDb(db, wordText);
         setWords((prevState) =>
           prevState.filter((item) => item.text !== wordText),
         );
