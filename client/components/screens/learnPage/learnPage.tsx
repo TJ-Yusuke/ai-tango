@@ -28,7 +28,7 @@ const SentenceQuiz: React.FC = () => {
     setShowResult(true);
     if (
       data !== undefined &&
-      answer === data[currentQuestionIndex].correctAnswer
+      answer === data[currentQuestionIndex].correctAnswer.word
     ) {
       setScore(score + 1);
     }
@@ -97,13 +97,13 @@ const SentenceQuiz: React.FC = () => {
               {/* 問題カード */}
               <View style={styles.card}>
                 <Text style={styles.sentence}>{currentQuestion.sentence}</Text>
-                {currentQuestion.options.map((option) => (
+                {currentQuestion.options.map((option, i) => (
                   <TouchableOpacity
-                    key={option.id}
+                    key={i}
                     style={[
                       styles.option,
                       showResult &&
-                      option.word === currentQuestion.correctAnswer
+                      option.word === currentQuestion.correctAnswer.word
                         ? styles.correctOption
                         : showResult && selectedAnswer === option.word
                           ? styles.incorrectOption
@@ -122,7 +122,7 @@ const SentenceQuiz: React.FC = () => {
                         )}
                       </View>
                       {showResult &&
-                        option.word !== currentQuestion.correctAnswer && (
+                        option.word !== currentQuestion.correctAnswer.word && (
                           <Button
                             mode="outlined"
                             compact
@@ -141,7 +141,7 @@ const SentenceQuiz: React.FC = () => {
                 {showResult && (
                   <View style={styles.resultContainer}>
                     <View style={styles.resultMessage}>
-                      {selectedAnswer === currentQuestion.correctAnswer ? (
+                      {selectedAnswer === currentQuestion.correctAnswer.word ? (
                         <MaterialIcons
                           name="check-circle"
                           size={24}
@@ -151,18 +151,19 @@ const SentenceQuiz: React.FC = () => {
                         <MaterialIcons name="error" size={24} color="red" />
                       )}
                       <Text style={styles.resultText}>
-                        {selectedAnswer === currentQuestion.correctAnswer
+                        {selectedAnswer === currentQuestion.correctAnswer.word
                           ? "正解です！"
-                          : `不正解です。正解は "${currentQuestion.correctAnswer}" でした。`}
+                          : `不正解です。正解は "${currentQuestion.correctAnswer.word}" でした。`}
                       </Text>
                     </View>
                     <View style={styles.explanation}>
                       <Text style={styles.explanationTitle}>解説:</Text>
                       <Text style={styles.explanationText}>
-                        "{currentQuestion.targetWord}" は「
+                        "{currentQuestion.correctAnswer.word}" は「
                         {
                           currentQuestion.options.find(
-                            (o) => o.word === currentQuestion.targetWord,
+                            (o) =>
+                              o.word === currentQuestion.correctAnswer.word,
                           )?.translation
                         }
                         」という意味です。
