@@ -86,10 +86,14 @@ const SentenceQuiz: React.FC = () => {
                   {currentQuestionIndex + 1} / {data.length}問目
                 </Text>
               </View>
-
-              {/* プログレスバー */}
               <ProgressBar
-                progress={currentQuestionIndex / data.length}
+                progress={
+                  data.length > 0
+                    ? parseFloat(
+                        (currentQuestionIndex / data.length).toFixed(1),
+                      )
+                    : 0
+                }
                 color="#6200ee"
                 style={styles.progressBar}
               />
