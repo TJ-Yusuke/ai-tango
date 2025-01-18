@@ -1,7 +1,7 @@
 import { SQLiteDatabase } from "expo-sqlite";
 import { Word } from "../models/word";
 
-type registerWordParam = {
+export type registerWordParam = {
   wordText: string;
   translatedWordsList: string[];
 };

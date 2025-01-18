@@ -26,6 +26,7 @@ export const AddWordModalScreen = () => {
       addTranslatedWordsList,
       deleteTranslatedWordItemFromList,
       registerWord,
+      debugBulkRegisterWord,
     },
   } = useAddWordModalScreenViewModel();
 
@@ -70,6 +71,7 @@ export const AddWordModalScreen = () => {
       )}
       <TextInput
         mode="outlined"
+        placeholder="改行で追加"
         value={translatedWordText}
         onChangeText={(text) => onTranslatedWordTextChange(text)}
         returnKeyType="done"
@@ -94,8 +96,11 @@ export const AddWordModalScreen = () => {
         onPress={() => registerWord()}
         style={styles.submitButton}
       >
-        追加する
+        登録する
       </Button>
+      {__DEV__ && (
+        <Button onPress={() => debugBulkRegisterWord()}>デバッグ追加</Button>
+      )}
     </KeyboardAvoidingView>
   );
 };
