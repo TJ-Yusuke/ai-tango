@@ -3,8 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import superjson from 'superjson';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
-import { z } from 'zod';
 import { generateContent } from './vertexai.js';
+import { WordsListSchema } from './models/question.js';
 
 const t = initTRPC.create({
   transformer: superjson,
@@ -12,10 +12,10 @@ const t = initTRPC.create({
 
 const appRouter = t.router({
   getQuestions: t.procedure
-  .input(z.array(z.string()))
+  .input(WordsListSchema)
   .query(async ({ input }) => {
     console.log(input)
-    return await generateContent();
+    return await generateContent(input);
   }),
 });
 export type AppRouter = typeof appRouter;

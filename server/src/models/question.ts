@@ -1,15 +1,17 @@
 import { z } from "zod";
 
-const OptionSchema = z.object({
+export const OptionSchema = z.object({
   word: z.string(),
-  translation: z.string(),
+  translation: z.array(z.string()),
 });
+export const WordsListSchema = z.array(OptionSchema);
+export type WordsList = z.infer<typeof WordsListSchema>;
 
 const CorrectAnswerSchema = OptionSchema;
 
 const QuestionSchema = z.object({
   sentence: z.string(),
-  options: z.array(OptionSchema),
+  options: WordsListSchema,
   correctAnswer: CorrectAnswerSchema,
   translation: z.string(),
   description: z.string(),
