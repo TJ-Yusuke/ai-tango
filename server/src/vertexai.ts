@@ -1,6 +1,7 @@
 import { VertexAI } from '@google-cloud/vertexai';
 import fs from 'fs'
 import { QuestionList, QuestionListSchema, WordsList } from './models/question.js';
+import { shuffleArray } from './shuffleArray.js'
 
 export async function generateContent(wordsList: WordsList): Promise<QuestionList | undefined> {
   const projectId = process.env.GCP_PROJECT_ID;
@@ -96,7 +97,12 @@ ${wordsListJson}`;
       const responseJson = result.response.candidates[0].content.parts[0].text ?? ""
       console.log(responseJson)
       const response = JSON.parse(responseJson)
-      return QuestionListSchema.parse(response)
+      const questionsList = QuestionListSchema.parse(response)
+      
+      // 選択肢をシャッフルする
+      return questionsList.map((question) => {
+        return {...question, options: shuffleArray(question.options)}
+      })
     }
   } catch (error) {
     console.error('Error:', error);
