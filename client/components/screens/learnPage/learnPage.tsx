@@ -110,7 +110,7 @@ const SentenceQuiz: React.FC = () => {
                             <Button
                               mode="outlined"
                               compact
-                              onPress={() => addToVocabulary(option.word)}
+                              onPress={() => addToVocabulary(option)}
                               disabled={addedWords.has(option.word)}
                               style={styles.addButton}
                             >

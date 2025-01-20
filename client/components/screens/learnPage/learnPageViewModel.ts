@@ -4,11 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Question,
   QuestionList,
+  Option,
   WordsList,
 } from "../../../../server/src/models/question";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { getAllWords } from "../../../db/db";
+import { getAllWords, registerWord } from "../../../db/db";
 import { Word } from "../../../models/word";
 
 type State = {
@@ -29,7 +30,7 @@ type Action = {
   selectNoAnswer: () => void;
   proceedNextQuestion: () => void;
   finishLearning: () => void;
-  addToVocabulary: (value: string) => void;
+  addToVocabulary: (value: Option) => void;
 };
 
 export const useLearnPageViewModel: ViewModelFunc<State, Action> = () => {
@@ -113,9 +114,13 @@ export const useLearnPageViewModel: ViewModelFunc<State, Action> = () => {
     router.dismiss();
   };
 
-  const addToVocabulary = (word: string) => {
-    if (!addedWords.has(word)) {
-      setAddedWords(new Set([...addedWords, word]));
+  const addToVocabulary = async (word: Option) => {
+    if (!addedWords.has(word.word)) {
+      setAddedWords(new Set([...addedWords, word.word]));
+      await registerWord(db, {
+        wordText: word.word,
+        translatedWordsList: word.translation,
+      });
     }
   };
 
