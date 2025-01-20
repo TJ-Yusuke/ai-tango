@@ -1,8 +1,8 @@
 import { VertexAI } from '@google-cloud/vertexai';
 import fs from 'fs'
-import { QuestionListSchema } from './models/question.js';
+import { QuestionList, QuestionListSchema } from './models/question.js';
 
-export async function generateContent() {
+export async function generateContent(): Promise<QuestionList | undefined> {
   const projectId = process.env.GCP_PROJECT_ID;
   const location = process.env.GCP_LOCATION;
 

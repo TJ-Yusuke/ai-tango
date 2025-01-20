@@ -24,3 +24,4 @@ const QuestionSchema = z.object({
 });
 
 export const QuestionListSchema = z.array(QuestionSchema);
+export type QuestionList = z.infer<typeof QuestionListSchema>;
