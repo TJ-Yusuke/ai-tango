@@ -1,8 +1,8 @@
 import { VertexAI } from '@google-cloud/vertexai';
 import fs from 'fs'
-import { QuestionList, QuestionListSchema } from './models/question.js';
+import { QuestionList, QuestionListSchema, WordsList } from './models/question.js';
 
-export async function generateContent(): Promise<QuestionList | undefined> {
+export async function generateContent(wordsList: WordsList): Promise<QuestionList | undefined> {
   const projectId = process.env.GCP_PROJECT_ID;
   const location = process.env.GCP_LOCATION;
 
@@ -37,31 +37,58 @@ export async function generateContent(): Promise<QuestionList | undefined> {
     }
   });
 
-  const prompt = '\
-  英語の専門家のあなたに英語の問題を作成してほしい。 以下に具体的な情報を与えるのでその情報に従って問題を作成してください。 \
-  - 問題の回答形式は4択問題\
-   - 4択の選択肢は英単語 or イディオム or 英熟語 となっている。 \
-   - それぞれの選択肢が同じ意味になるようなことは必ずあり得ない \
-   - もし正解の解答以外の選択肢を"____"部分に当てはめた際、意味が成立してしまうことは必ずあり得ない \
-   - 英単語が答えになる場合は、他の選択肢はすべて英単語 \
-   - イディオムが答えになる場合は、他の選択肢はすべてイディオム \
-   - 英熟語が答えになる場合は、他の選択肢はすべて英熟語 \
-   - 選択肢には対応する日本語訳がある \
-   - 英単語の場合は、対応する日本語は2語以上の複数の単語がある。ただし、2語以上の複数の単語に必ず重複はないものとする。もし2語以上生成をした際、重複がある場合は重複を省いたもので出力する。その結果1語になってしまうものは仕方がないものとする \
-   - イディオム or 英熟語の場合は対応する日本語は1つ以上がある \
-  - 問題文の形式は、英語の例文であり、答えとなる部分が”____”になっている。 \
-   - 問題文には対応する日本語訳がある \
-   - 問題文には対応する日本語の解説がある \
-   - 問題文の解説("description")は、自然な文章で記述する。 \
-  出力する問題の形式は以下の綺麗な改行や空白のないjson形式で示してほしい（問題は例） \
-  ```json [{ "sentence": "I need to _____ this document before sending it.", "options": [ { "word": "review", "translation": "レビューする、確認する" }, { "word": "contain", "translation": "含む、収容する" }, { "word": "mention", "translation": "言及する、述べる" }, { "word": "describe", "translation": "説明する、描写する" } ], "correctAnswer": { "word": "review", "translation": "レビューする、確認する" }, "translation": "送信する前にこの文書を見直す必要があります。" "description": "`review`は「レビューする、確認する」という意味です。この文脈では、書類を送る前に確認する必要があるという意味で使われています。" }, ... ] ```\
-  上記を踏まえて \
-  [ \
-    {"word": "attorney","translation":"弁護士、代理人"},\
-    {"word": "astronaut","translation":"宇宙飛行士"}, \
-    {"word": "create","translation":"作る, 生み出す, 引き起こす"} \
-  ] \
-  が答えとなる問題を１つずつ考えてほしい';
+  const wordsListJson = JSON.stringify(wordsList);
+  
+  const prompt = `\
+As an English language expert, I want you to create English questions. Based on the specific information provided below, please create the questions accordingly. \
+- The format of the question should be a multiple-choice question with 4 options. \
+- Each of the 4 options should be either English words, idioms, or phrases. \
+- **It is absolutely not possible for all the options to have the same meaning. Moreover, when the incorrect options are substituted for the blank in the sentence, they should not create a grammatically correct or meaningful sentence.**
+- If any of the incorrect options are placed in the “____” space, it must not make logical sense in the sentence. \
+- If the correct answer is a single word, all other options must also be individual English words. \
+- If the correct answer is an idiom, all other options must also be idioms. \
+- If the correct answer is a phrase, all other options must also be phrases. \
+- Each option must have a corresponding Japanese translation. \
+- If the answer is a word, its corresponding Japanese translation must have at least two or more non-overlapping words. If overlaps occur, the redundant parts should be omitted. If this results in a single word, that is acceptable. \
+- If the answer is an idiom or phrase, the corresponding Japanese must have one or more translations. \
+- The question sentence should be an example sentence in English, with the correct answer replaced by “____”. \
+- The question sentence must have a corresponding Japanese translation. \
+- The question must also have a corresponding explanation in Japanese (“description”), written in a natural and clear manner. \
+- Present the output in a clean, JSON format without any unnecessary whitespace or newlines, as shown in the example below: \
+\`\`\`json
+[
+{
+"sentence": "I need to _____ this document before sending it.",
+"options": [
+{
+"word": "review",
+"translation": ["レビューする", "確認する"]
+},
+{
+"word": "contain",
+"translation": ["含む", "収容する"]
+},
+{
+"word": "mention",
+"translation": ["言及する", "述べる"]
+},
+{
+"word": "describe",
+"translation": ["説明する", "描写する"]
+}
+],
+"correctAnswer": {
+"word": "review",
+"translation": ["レビューする", "確認する"]
+},
+"translation": "送信する前にこの文書を見直す必要があります。",
+"description": "\`review\`は「レビューする、確認する」という意味です。この文脈では、書類を送る前に確認する必要があるという意味で使われています。"
+},
+...
+]
+\`\`\`
+Considering this format, please generate one question for each item in this list:
+${wordsListJson}`;
 
   try {
     const result = await model.generateContent(prompt);
