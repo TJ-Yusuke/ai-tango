@@ -100,7 +100,7 @@ const SentenceQuiz: React.FC = () => {
                           <Text style={styles.optionText}>{option.word}</Text>
                           {(showResult || selectedAnswer === option.word) && (
                             <Text style={styles.translationText}>
-                              {option.translation.join("、")}
+                              {option.translation.join(", ")}
                             </Text>
                           )}
                         </View>
