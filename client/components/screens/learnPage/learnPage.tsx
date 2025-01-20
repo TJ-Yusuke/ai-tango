@@ -36,12 +36,17 @@ const SentenceQuiz: React.FC = () => {
 
   if (isQuestionLoading) {
     return (
-      <ActivityIndicator
-        animating={isQuestionLoading}
-        color="#3498db"
-        size="large"
-        style={{ marginTop: 20 }}
-      />
+      <View style={styles.loadingContainer}>
+        <View style={styles.loadingInnerContainer}>
+          <ActivityIndicator
+            animating={isQuestionLoading}
+            color="#3498db"
+            size="large"
+            style={{ marginBottom: 10 }} // テキストとの余白を調整
+          />
+          <Text style={styles.loadingText}>問題を作成しています</Text>
+        </View>
+      </View>
     );
   }
 
@@ -139,15 +144,13 @@ const SentenceQuiz: React.FC = () => {
                       <View style={styles.explanation}>
                         <Text style={styles.explanationTitle}>解説:</Text>
                         <Text style={styles.explanationText}>
-                          "{currentQuestion.correctAnswer.word}" は「
-                          {
-                            currentQuestion.options.find(
-                              (o) =>
-                                o.word === currentQuestion.correctAnswer.word,
-                            )?.translation
-                          }
-                          」という意味です。
-                          この文脈では、書類を送る前に確認する必要があるという意味で使われています。
+                          {currentQuestion.description}
+                        </Text>
+                      </View>
+                      <View style={styles.explanation}>
+                        <Text style={styles.explanationTitle}>翻訳:</Text>
+                        <Text style={styles.explanationText}>
+                          {currentQuestion.translation}
                         </Text>
                       </View>
                     </View>
@@ -194,6 +197,19 @@ const SentenceQuiz: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1, // 全画面を占める
+    justifyContent: "center", // 垂直方向に中央揃え
+    alignItems: "center", // 水平方向に中央揃え
+    backgroundColor: "#fff",
+  },
+  loadingInnerContainer: {
+    alignItems: "center", // 中身を水平方向に中央揃え
+  },
+  loadingText: {
+    fontSize: 16, // テキストサイズを設定
+    color: "#333", // テキストの色を設定
+  },
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
