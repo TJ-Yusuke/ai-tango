@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -6,214 +6,191 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import { ProgressBar, Button } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { trpc } from "../../../trpc";
+import { useLearnPageViewModel } from "./learnPageViewModel";
 
 const SentenceQuiz: React.FC = () => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [showResult, setShowResult] = useState<boolean>(false);
-  const [score, setScore] = useState<number>(0);
-  const [addedWords, setAddedWords] = useState<Set<string>>(new Set());
+  const {
+    state: {
+      isQuestionLoading,
+      isError,
+      questionList,
+      currentQuestionIndex,
+      currentQuestion,
+      selectedAnswer,
+      showResult,
+      addedWords,
+      isLastQuestion,
+    },
+    action: {
+      selectAnswer,
+      selectNoAnswer,
+      proceedNextQuestion,
+      finishLearning,
+      addToVocabulary,
+    },
+  } = useLearnPageViewModel();
 
-  const router = useRouter();
-
-  const { data, isLoading, error } = trpc.getQuestions.useQuery(["a", "a"]);
-
-  const handleAnswerSelect = (answer: string) => {
-    setSelectedAnswer(answer);
-    setShowResult(true);
-    if (
-      data !== undefined &&
-      answer === data[currentQuestionIndex].correctAnswer.word
-    ) {
-      setScore(score + 1);
-    }
-  };
-
-  const handleNext = () => {
-    setSelectedAnswer(null);
-    setShowResult(false);
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
-  };
-
-  const handleFinish = () => {
-    router.dismiss();
-  };
-
-  const handleAddToVocabulary = (word: string) => {
-    if (!addedWords.has(word)) {
-      setAddedWords(new Set([...addedWords, word]));
-    }
-  };
-
-  const handleIDontKnow = () => {
-    setShowResult(true);
-  };
-
-  const currentQuestion = useMemo(() => {
-    if (data !== undefined) {
-      return data[currentQuestionIndex];
-    }
-  }, [currentQuestionIndex, data]);
-
-  const isLastQuestion = useMemo(() => {
-    if (data !== undefined) {
-      return currentQuestionIndex === data.length - 1;
-    } else return false;
-  }, [currentQuestionIndex, data]);
-
-  if (isLoading) {
-    return <Text>Loading...</Text>;
+  if (isQuestionLoading) {
+    return (
+      <ActivityIndicator
+        animating={isQuestionLoading}
+        color="#3498db"
+        size="large"
+        style={{ marginTop: 20 }}
+      />
+    );
   }
 
-  if (error) {
-    return <Text>Error: {error.message}</Text>;
+  if (isError) {
+    return <Text>Error: 予期せぬエラーが発生しました</Text>;
   }
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.flexContainer}>
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {data !== undefined && currentQuestion !== undefined ? (
-            <View>
-              <View style={styles.header}>
-                <Text style={styles.headerTitle}>例文問題</Text>
-                <Text style={styles.headerSubtitle}>
-                  {currentQuestionIndex + 1} / {data.length}問目
-                </Text>
-              </View>
-              <ProgressBar
-                progress={
-                  data.length > 0
-                    ? parseFloat(
-                        (currentQuestionIndex / data.length).toFixed(1),
-                      )
-                    : 0
-                }
-                color="#6200ee"
-                style={styles.progressBar}
-              />
+  if (questionList.length > 0) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.flexContainer}>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            {currentQuestion ? (
+              <View>
+                <View style={styles.header}>
+                  <Text style={styles.headerTitle}>例文問題</Text>
+                  <Text style={styles.headerSubtitle}>
+                    {currentQuestionIndex + 1} / {questionList.length}問目
+                  </Text>
+                </View>
+                <ProgressBar
+                  progress={parseFloat(
+                    (currentQuestionIndex / questionList.length).toFixed(1),
+                  )}
+                  color="#6200ee"
+                  style={styles.progressBar}
+                />
 
-              {/* 問題カード */}
-              <View style={styles.card}>
-                <Text style={styles.sentence}>{currentQuestion.sentence}</Text>
-                {currentQuestion.options.map((option, i) => (
-                  <TouchableOpacity
-                    key={i}
-                    style={[
-                      styles.option,
-                      showResult &&
-                      option.word === currentQuestion.correctAnswer.word
-                        ? styles.correctOption
-                        : showResult && selectedAnswer === option.word
-                          ? styles.incorrectOption
-                          : styles.defaultOption,
-                    ]}
-                    disabled={showResult}
-                    onPress={() => handleAnswerSelect(option.word)}
-                  >
-                    <View style={styles.optionContent}>
-                      <View style={styles.textContainer}>
-                        <Text style={styles.optionText}>{option.word}</Text>
-                        {(showResult || selectedAnswer === option.word) && (
-                          <Text style={styles.translationText}>
-                            {option.translation}
-                          </Text>
-                        )}
+                {/* 問題カード */}
+                <View style={styles.card}>
+                  <Text style={styles.sentence}>
+                    {currentQuestion.sentence}
+                  </Text>
+                  {currentQuestion.options.map((option, i) => (
+                    <TouchableOpacity
+                      key={i}
+                      style={[
+                        styles.option,
+                        showResult &&
+                        option.word === currentQuestion.correctAnswer.word
+                          ? styles.correctOption
+                          : showResult && selectedAnswer === option.word
+                            ? styles.incorrectOption
+                            : styles.defaultOption,
+                      ]}
+                      disabled={showResult}
+                      onPress={() => selectAnswer(option.word)}
+                    >
+                      <View style={styles.optionContent}>
+                        <View style={styles.textContainer}>
+                          <Text style={styles.optionText}>{option.word}</Text>
+                          {(showResult || selectedAnswer === option.word) && (
+                            <Text style={styles.translationText}>
+                              {option.translation}
+                            </Text>
+                          )}
+                        </View>
+                        {showResult &&
+                          option.word !==
+                            currentQuestion.correctAnswer.word && (
+                            <Button
+                              mode="outlined"
+                              compact
+                              onPress={() => addToVocabulary(option.word)}
+                              disabled={addedWords.has(option.word)}
+                              style={styles.addButton}
+                            >
+                              {addedWords.has(option.word)
+                                ? "追加済み"
+                                : "単語帳に追加"}
+                            </Button>
+                          )}
                       </View>
-                      {showResult &&
-                        option.word !== currentQuestion.correctAnswer.word && (
-                          <Button
-                            mode="outlined"
-                            compact
-                            onPress={() => handleAddToVocabulary(option.word)}
-                            disabled={addedWords.has(option.word)}
-                            style={styles.addButton}
-                          >
-                            {addedWords.has(option.word)
-                              ? "追加済み"
-                              : "単語帳に追加"}
-                          </Button>
+                    </TouchableOpacity>
+                  ))}
+                  {showResult && (
+                    <View style={styles.resultContainer}>
+                      <View style={styles.resultMessage}>
+                        {selectedAnswer ===
+                        currentQuestion.correctAnswer.word ? (
+                          <MaterialIcons
+                            name="check-circle"
+                            size={24}
+                            color="green"
+                          />
+                        ) : (
+                          <MaterialIcons name="error" size={24} color="red" />
                         )}
+                        <Text style={styles.resultText}>
+                          {selectedAnswer === currentQuestion.correctAnswer.word
+                            ? "正解です！"
+                            : `不正解です。正解は "${currentQuestion.correctAnswer.word}" でした。`}
+                        </Text>
+                      </View>
+                      <View style={styles.explanation}>
+                        <Text style={styles.explanationTitle}>解説:</Text>
+                        <Text style={styles.explanationText}>
+                          "{currentQuestion.correctAnswer.word}" は「
+                          {
+                            currentQuestion.options.find(
+                              (o) =>
+                                o.word === currentQuestion.correctAnswer.word,
+                            )?.translation
+                          }
+                          」という意味です。
+                          この文脈では、書類を送る前に確認する必要があるという意味で使われています。
+                        </Text>
+                      </View>
                     </View>
-                  </TouchableOpacity>
-                ))}
-                {showResult && (
-                  <View style={styles.resultContainer}>
-                    <View style={styles.resultMessage}>
-                      {selectedAnswer === currentQuestion.correctAnswer.word ? (
-                        <MaterialIcons
-                          name="check-circle"
-                          size={24}
-                          color="green"
-                        />
-                      ) : (
-                        <MaterialIcons name="error" size={24} color="red" />
-                      )}
-                      <Text style={styles.resultText}>
-                        {selectedAnswer === currentQuestion.correctAnswer.word
-                          ? "正解です！"
-                          : `不正解です。正解は "${currentQuestion.correctAnswer.word}" でした。`}
-                      </Text>
-                    </View>
-                    <View style={styles.explanation}>
-                      <Text style={styles.explanationTitle}>解説:</Text>
-                      <Text style={styles.explanationText}>
-                        "{currentQuestion.correctAnswer.word}" は「
-                        {
-                          currentQuestion.options.find(
-                            (o) =>
-                              o.word === currentQuestion.correctAnswer.word,
-                          )?.translation
-                        }
-                        」という意味です。
-                        この文脈では、書類を送る前に確認する必要があるという意味で使われています。
-                      </Text>
-                    </View>
-                  </View>
-                )}
+                  )}
+                </View>
               </View>
-            </View>
-          ) : null}
-        </ScrollView>
+            ) : null}
+          </ScrollView>
 
-        {/* フッター */}
-        <View style={styles.footer}>
-          {!showResult ? (
-            /* わからないボタン */
-            <TouchableOpacity
-              onPress={handleIDontKnow}
-              style={[styles.fullWidthButton, styles.outlinedButton]} // Outlinedスタイルを適用
-            >
-              <Text style={[styles.buttonText, styles.outlinedButtonText]}>
-                わからない
-              </Text>
-            </TouchableOpacity>
-          ) : isLastQuestion ? (
-            /* 問題を終了するボタン（最後の問題の場合） */
-            <TouchableOpacity
-              onPress={handleFinish}
-              style={[styles.fullWidthButton, styles.finishButton]}
-            >
-              <Text style={styles.buttonText}>問題を終了する</Text>
-            </TouchableOpacity>
-          ) : (
-            /* 次の問題へボタン */
-            <TouchableOpacity
-              onPress={handleNext}
-              style={[styles.fullWidthButton, styles.nextButton]}
-            >
-              <Text style={styles.buttonText}>次の問題へ</Text>
-            </TouchableOpacity>
-          )}
+          {/* フッター */}
+          <View style={styles.footer}>
+            {!showResult ? (
+              /* わからないボタン */
+              <TouchableOpacity
+                onPress={selectNoAnswer}
+                style={[styles.fullWidthButton, styles.outlinedButton]} // Outlinedスタイルを適用
+              >
+                <Text style={[styles.buttonText, styles.outlinedButtonText]}>
+                  わからない
+                </Text>
+              </TouchableOpacity>
+            ) : isLastQuestion ? (
+              /* 問題を終了するボタン（最後の問題の場合） */
+              <TouchableOpacity
+                onPress={finishLearning}
+                style={[styles.fullWidthButton, styles.finishButton]}
+              >
+                <Text style={styles.buttonText}>問題を終了する</Text>
+              </TouchableOpacity>
+            ) : (
+              /* 次の問題へボタン */
+              <TouchableOpacity
+                onPress={proceedNextQuestion}
+                style={[styles.fullWidthButton, styles.nextButton]}
+              >
+                <Text style={styles.buttonText}>次の問題へ</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
-  );
+      </SafeAreaView>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
