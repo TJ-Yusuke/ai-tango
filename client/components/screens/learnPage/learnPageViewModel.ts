@@ -1,8 +1,15 @@
 import { trpc } from "../../../trpc";
 import { ViewModelFunc } from "../../../components/ViewModelFunc";
 import { useEffect, useMemo, useState } from "react";
-import { Question, QuestionList } from "../../../../server/src/models/question";
+import {
+  Question,
+  QuestionList,
+  WordsList,
+} from "../../../../server/src/models/question";
 import { useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
+import { getAllWords } from "../../../db/db";
+import { Word } from "../../../models/word";
 
 type State = {
   isQuestionLoading: boolean;
@@ -26,6 +33,8 @@ type Action = {
 };
 
 export const useLearnPageViewModel: ViewModelFunc<State, Action> = () => {
+  const db = useSQLiteContext();
+
   const [isQuestionLoading, setIsQuestionLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
 
@@ -44,10 +53,11 @@ export const useLearnPageViewModel: ViewModelFunc<State, Action> = () => {
       setIsQuestionLoading(true);
       setIsError(false);
 
-      const response: QuestionList | undefined = await trpc.getQuestions.query([
-        "a",
-        "a",
-      ]);
+      const allWordsList = await getAllWords(db);
+      const requestQuestionsList = shuffleFilterQuestions(allWordsList);
+      const request = createRequest(requestQuestionsList);
+      const response: QuestionList | undefined =
+        await trpc.getQuestions.query(request);
       if (response) {
         setQuestionList(response);
       } else {
@@ -57,6 +67,28 @@ export const useLearnPageViewModel: ViewModelFunc<State, Action> = () => {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const shuffleFilterQuestions = (wordsList: Word[]): Word[] => {
+    const shuffled = wordsList.slice();
+
+    // Fisher-Yatesアルゴリズムでシャッフル
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    // 最大10個の要素を取得（元の配列が10個未満の場合、それに応じた数を返す）
+    return shuffled.slice(0, 10);
+  };
+
+  const createRequest = (wordsList: Word[]): WordsList => {
+    return wordsList.map((word) => {
+      return {
+        word: word.text,
+        translation: JSON.parse(word.translatedTextJson) as string[],
+      };
+    });
   };
 
   const selectAnswer = (answer: string) => {
