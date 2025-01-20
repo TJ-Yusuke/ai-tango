@@ -3,11 +3,7 @@ import { Stack, useRouter } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
 import { TouchableOpacity, View } from "react-native";
 import { MD3LightTheme, PaperProvider } from "react-native-paper";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import client, { trpc } from "../trpc";
 import { Ionicons } from "@expo/vector-icons";
-
-const queryClient = new QueryClient();
 
 const theme = {
   ...MD3LightTheme, // or MD3DarkTheme
@@ -23,64 +19,60 @@ const theme = {
 function RootLayout() {
   const router = useRouter();
   return (
-    <QueryClientProvider client={queryClient}>
-      <trpc.Provider client={client} queryClient={queryClient}>
-        <SQLiteProvider databaseName="test.db" onInit={migrateDbIfNeeded}>
-          <PaperProvider theme={theme}>
-            <Stack
-              screenOptions={{
-                headerTitleStyle: {
-                  fontWeight: "bold",
-                  color: "white",
-                  fontSize: 20,
-                },
-                headerStyle: {
-                  backgroundColor: "#3498db",
-                },
-              }}
-            >
-              <Stack.Screen
-                name="index"
-                options={{
-                  title: "AIたんご帳",
-                  headerRight: () => (
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPressIn={() => {
-                          router.push("/addWordModal");
-                        }}
-                      >
-                        <Ionicons name="add" size={36} color="white" />
-                      </TouchableOpacity>
-                    </View>
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name="addWordModal"
-                options={{
-                  presentation: "modal",
-                  title: "単語を追加",
-                }}
-              />
-              <Stack.Screen
-                name="learn"
-                options={{
-                  title: "例文を解こう",
-                  headerBackButtonDisplayMode: "minimal",
-                  headerTintColor: "white",
-                }}
-              />
-            </Stack>
-          </PaperProvider>
-        </SQLiteProvider>
-      </trpc.Provider>
-    </QueryClientProvider>
+    <SQLiteProvider databaseName="test.db" onInit={migrateDbIfNeeded}>
+      <PaperProvider theme={theme}>
+        <Stack
+          screenOptions={{
+            headerTitleStyle: {
+              fontWeight: "bold",
+              color: "white",
+              fontSize: 20,
+            },
+            headerStyle: {
+              backgroundColor: "#3498db",
+            },
+          }}
+        >
+          <Stack.Screen
+            name="index"
+            options={{
+              title: "AIたんご帳",
+              headerRight: () => (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <TouchableOpacity
+                    onPressIn={() => {
+                      router.push("/addWordModal");
+                    }}
+                  >
+                    <Ionicons name="add" size={36} color="white" />
+                  </TouchableOpacity>
+                </View>
+              ),
+            }}
+          />
+          <Stack.Screen
+            name="addWordModal"
+            options={{
+              presentation: "modal",
+              title: "単語を追加",
+            }}
+          />
+          <Stack.Screen
+            name="learn"
+            options={{
+              title: "例文を解こう",
+              headerBackButtonDisplayMode: "minimal",
+              headerTintColor: "white",
+            }}
+          />
+        </Stack>
+      </PaperProvider>
+    </SQLiteProvider>
   );
 }
 
