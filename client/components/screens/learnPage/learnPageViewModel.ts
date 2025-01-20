@@ -1,6 +1,6 @@
 import { trpc } from "../../../trpc";
 import { ViewModelFunc } from "../../../components/ViewModelFunc";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Question,
   QuestionList,
@@ -48,7 +48,7 @@ export const useLearnPageViewModel: ViewModelFunc<State, Action> = () => {
 
   const router = useRouter();
 
-  const fetchQuestions = async () => {
+  const fetchQuestions = useCallback(async () => {
     try {
       setIsQuestionLoading(true);
       setIsError(false);
@@ -67,7 +67,7 @@ export const useLearnPageViewModel: ViewModelFunc<State, Action> = () => {
     } catch (e) {
       console.error(e);
     }
-  };
+  }, [db]);
 
   const shuffleFilterQuestions = (wordsList: Word[]): Word[] => {
     const shuffled = wordsList.slice();
@@ -123,7 +123,7 @@ export const useLearnPageViewModel: ViewModelFunc<State, Action> = () => {
     (async () => {
       await fetchQuestions();
     })();
-  }, []);
+  }, [fetchQuestions]);
 
   const currentQuestion: Question = useMemo(() => {
     return questionList[currentQuestionIndex];
