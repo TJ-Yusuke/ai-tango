@@ -4,6 +4,9 @@ import { AnimatedFAB, Button } from "react-native-paper";
 import { useTopPageViewModel } from "./topPageViewModel";
 import { WordCard } from "../../wordCard";
 import { useRouter } from "expo-router";
+import { Word } from "../../../models/word";
+
+type TopPageListItemType = Word | { isAddButton: boolean };
 
 const TopPage = () => {
   const {
@@ -49,16 +52,15 @@ const TopPage = () => {
     <View style={styles.container}>
       <FlatList
         style={styles.scrollView}
-        data={words}
+        data={[...words, { isAddButton: true }] as TopPageListItemType[]}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => {
-          const isLastItem = index === words.length - 1;
-          if (isLastItem) {
+          if ("isAddButton" in item) {
             return (
               <Button
                 icon="plus"
                 onPress={() => router.push("/addWordModal")}
-                contentStyle={styles.addButtonContent} // ボタン全体のスタイル
+                contentStyle={styles.addButtonContent}
                 labelStyle={styles.addButtonLabel}
               >
                 単語を追加する
