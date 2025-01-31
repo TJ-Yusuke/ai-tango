@@ -122,18 +122,9 @@ export const useLearnPageViewModel: ViewModelFunc<State, Action> = () => {
         excludeWords: [],
         length: 10,
       });
-      answerList.map((value) => {
-        console.log(value.text);
-      });
       await createQuestionList(answerList);
     })();
   }, [createQuestionList, db]);
-
-  useEffect(() => {
-    questionList.map((value) => {
-      console.log(value.correctAnswer.word);
-    });
-  }, [questionList]);
 
   const currentQuestion: Question = useMemo(() => {
     return questionList[currentQuestionIndex];
