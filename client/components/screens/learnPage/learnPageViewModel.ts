@@ -9,7 +9,7 @@ import {
 } from "../../../../server/src/models/question";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { getAllWords, getRandomWords, registerWord } from "../../../db/db";
+import { getRandomWords, registerWord } from "../../../db/db";
 import { Word } from "../../../models/word";
 
 type State = {
