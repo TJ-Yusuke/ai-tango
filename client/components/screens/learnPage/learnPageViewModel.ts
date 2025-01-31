@@ -9,7 +9,7 @@ import {
 } from "../../../../server/src/models/question";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { getAllWords, registerWord } from "../../../db/db";
+import { getAllWords, getRandomWords, registerWord } from "../../../db/db";
 import { Word } from "../../../models/word";
 
 type State = {
@@ -49,39 +49,30 @@ export const useLearnPageViewModel: ViewModelFunc<State, Action> = () => {
 
   const router = useRouter();
 
-  const fetchQuestions = useCallback(async () => {
+  /**
+   * ローディング時間を減らすために2件ずつ生成させる
+   */
+  const createQuestionList = useCallback(async (answerList: Word[]) => {
     try {
       setIsQuestionLoading(true);
       setIsError(false);
-
-      const allWordsList = await getAllWords(db);
-      const requestQuestionsList = shuffleFilterQuestions(allWordsList);
-      const request = createRequest(requestQuestionsList);
-      const response: QuestionList | undefined =
-        await trpc.getQuestions.query(request);
-      if (response) {
-        setQuestionList(response);
-      } else {
-        setIsError(true);
+      // 2件ずつ生成するためのループ
+      for (let i = 0; i < answerList.length; i += 2) {
+        const request = createRequest(answerList.slice(i, i + 2));
+        const response: QuestionList | undefined =
+          await trpc.getQuestions.query(request);
+        if (response) {
+          setQuestionList((prevState) => [...prevState, ...response]);
+          setIsQuestionLoading(false);
+        } else {
+          setIsQuestionLoading(false);
+          setIsError(true);
+        }
       }
-      setIsQuestionLoading(false);
     } catch (e) {
       console.error(e);
     }
-  }, [db]);
-
-  const shuffleFilterQuestions = (wordsList: Word[]): Word[] => {
-    const shuffled = wordsList.slice();
-
-    // Fisher-Yatesアルゴリズムでシャッフル
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-
-    // 最大10個の要素を取得（元の配列が10個未満の場合、それに応じた数を返す）
-    return shuffled.slice(0, 10);
-  };
+  }, []);
 
   const createRequest = (wordsList: Word[]): WordsList => {
     return wordsList.map((word) => {
@@ -126,9 +117,23 @@ export const useLearnPageViewModel: ViewModelFunc<State, Action> = () => {
 
   useEffect(() => {
     (async () => {
-      await fetchQuestions();
+      const answerList = await getRandomWords({
+        db: db,
+        excludeWords: [],
+        length: 10,
+      });
+      answerList.map((value) => {
+        console.log(value.text);
+      });
+      await createQuestionList(answerList);
     })();
-  }, [fetchQuestions]);
+  }, [createQuestionList, db]);
+
+  useEffect(() => {
+    questionList.map((value) => {
+      console.log(value.correctAnswer.word);
+    });
+  }, [questionList]);
 
   const currentQuestion: Question = useMemo(() => {
     return questionList[currentQuestionIndex];
