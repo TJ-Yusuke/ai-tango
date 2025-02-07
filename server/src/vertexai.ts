@@ -2,35 +2,38 @@ import { VertexAI } from '@google-cloud/vertexai';
 import fs from 'fs'
 import { QuestionList, QuestionListSchema, WordsList } from './models/question.js';
 import { shuffleArray } from './shuffleArray.js'
+import { resourceLimits } from 'worker_threads';
 
 export async function generateContent(wordsList: WordsList): Promise<QuestionList | undefined> {
   const projectId = process.env.GCP_PROJECT_ID;
   const location = process.env.GCP_LOCATION;
 
-  const keyFilePath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-  if (keyFilePath == undefined) {
-    console.error('.envファイルが読み込めません');
-    return;
-  }
+  // const keyFilePath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  // if (keyFilePath == undefined) {
+  //   console.error('.envファイルが読み込めません');
+  //   return;
+  // }
 
-  let serviceAccountKey;
+  // let serviceAccountKey;
 
-  try {
-    const rawKey = fs.readFileSync(keyFilePath, 'utf-8');
-    serviceAccountKey = JSON.parse(rawKey);
-  } catch (error) {
-    console.error('サービスアカウントキーを読み取れません:', error);
-    return;
-  }
+  // try {
+  //   const rawKey = fs.readFileSync(keyFilePath, 'utf-8');
+  //   serviceAccountKey = JSON.parse(rawKey);
+  // } catch (error) {
+  //   console.error('サービスアカウントキーを読み取れません:', error);
+  //   return;
+  // }
 
-  const authOptions = {
-    credentials: {
-      client_email: serviceAccountKey.client_email,
-      private_key: serviceAccountKey.private_key,
-    },
-  };
+  // const authOptions = {
+  //   credentials: {
+  //     client_email: serviceAccountKey.client_email,
+  //     private_key: serviceAccountKey.private_key,
+  //   },
+  // };
 
-  const vertexAI = new VertexAI({project: projectId, location: location, googleAuthOptions: authOptions });
+  // const vertexAI = new VertexAI({project: projectId, location: location, googleAuthOptions: authOptions });
+
+  const vertexAI = new VertexAI({project: projectId, location: location });
   const model = vertexAI.getGenerativeModel({
     model: 'gemini-2.0-flash-exp',
     generationConfig: {
@@ -93,6 +96,7 @@ ${wordsListJson}`;
 
   try {
     const result = await model.generateContent(prompt);
+    console.log(result)
     if (result.response.candidates) {
       const responseJson = result.response.candidates[0].content.parts[0].text ?? ""
       console.log(responseJson)
