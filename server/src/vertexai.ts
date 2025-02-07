@@ -8,31 +8,6 @@ export async function generateContent(wordsList: WordsList): Promise<QuestionLis
   const projectId = process.env.GCP_PROJECT_ID;
   const location = process.env.GCP_LOCATION;
 
-  // const keyFilePath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-  // if (keyFilePath == undefined) {
-  //   console.error('.envファイルが読み込めません');
-  //   return;
-  // }
-
-  // let serviceAccountKey;
-
-  // try {
-  //   const rawKey = fs.readFileSync(keyFilePath, 'utf-8');
-  //   serviceAccountKey = JSON.parse(rawKey);
-  // } catch (error) {
-  //   console.error('サービスアカウントキーを読み取れません:', error);
-  //   return;
-  // }
-
-  // const authOptions = {
-  //   credentials: {
-  //     client_email: serviceAccountKey.client_email,
-  //     private_key: serviceAccountKey.private_key,
-  //   },
-  // };
-
-  // const vertexAI = new VertexAI({project: projectId, location: location, googleAuthOptions: authOptions });
-
   const vertexAI = new VertexAI({project: projectId, location: location });
   const model = vertexAI.getGenerativeModel({
     model: 'gemini-2.0-flash-exp',
