@@ -1,5 +1,10 @@
 {
-  "name": "ai-tango",
-  "version": "1.0.0",
-  "main": "index.js"
+	"name": "ai-tango",
+	"version": "1.0.0",
+	"main": "index.js",
+	"volta": {
+		"node": "22.12.0",
+		"npm": "11.0.0"
+	},
+	"private": true
 }
