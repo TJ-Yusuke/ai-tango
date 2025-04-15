@@ -41,9 +41,9 @@ const app = express();
 const port = 8080
 
 app.use(cors());
-app.use(authenticateToken);
 app.use(
   '/trpc',
+  authenticateToken,
   createExpressMiddleware({
     router: appRouter,
   })
