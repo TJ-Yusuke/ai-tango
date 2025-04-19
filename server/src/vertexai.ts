@@ -1,23 +1,21 @@
-import { VertexAI } from '@google-cloud/vertexai';
-import fs from 'fs'
-import { QuestionList, QuestionListSchema, WordsList } from './models/question.js';
-import { shuffleArray } from './shuffleArray.js'
-import { resourceLimits } from 'worker_threads';
+import { VertexAI } from "@google-cloud/vertexai";
+import { QuestionList, QuestionListSchema, WordsList } from "./models/question.js";
+import { shuffleArray } from "./shuffleArray.js";
 
 export async function generateContent(wordsList: WordsList): Promise<QuestionList | undefined> {
   const projectId = process.env.GCP_PROJECT_ID;
   const location = process.env.GCP_LOCATION;
 
-  const vertexAI = new VertexAI({project: projectId, location: location });
+  const vertexAI = new VertexAI({ project: projectId, location: location });
   const model = vertexAI.getGenerativeModel({
-    model: 'gemini-2.0-flash-exp',
+    model: "gemini-2.0-flash-exp",
     generationConfig: {
-      responseMimeType: "application/json"
-    }
+      responseMimeType: "application/json",
+    },
   });
 
   const wordsListJson = JSON.stringify(wordsList);
-  
+
   const prompt = `\
 As an English language expert, I want you to create English questions. Based on the specific information provided below, please create the questions accordingly. \
 - The format of the question should be a multiple-choice question with 4 options. \
@@ -71,19 +69,19 @@ ${wordsListJson}`;
 
   try {
     const result = await model.generateContent(prompt);
-    console.log(result)
+    console.log(result);
     if (result.response.candidates) {
-      const responseJson = result.response.candidates[0].content.parts[0].text ?? ""
-      console.log(responseJson)
-      const response = JSON.parse(responseJson)
-      const questionsList = QuestionListSchema.parse(response)
-      
+      const responseJson = result.response.candidates[0].content.parts[0].text ?? "";
+      console.log(responseJson);
+      const response = JSON.parse(responseJson);
+      const questionsList = QuestionListSchema.parse(response);
+
       // 選択肢をシャッフルする
       return questionsList.map((question) => {
-        return {...question, options: shuffleArray(question.options)}
-      })
+        return { ...question, options: shuffleArray(question.options) };
+      });
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
 }

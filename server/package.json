@@ -4,8 +4,9 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node ./.dist/index.js",
-    "dev": "tsc && node --env-file=.env ./.dist/index.js",
+    "start": "node ./dist/index.js",
+    "build:dev": "tsc --sourceMap",
+    "dev": "tsc && node --env-file=.env ./dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "TJ-Yusuke",
@@ -15,14 +16,13 @@
     "@types/cors": "^2.8.17",
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "fs": "^0.0.1-security",
     "superjson": "^2.2.2",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.5",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
-  }
+    "ts-node": "^10.9.2"
+  },
+  "private": true
 }
