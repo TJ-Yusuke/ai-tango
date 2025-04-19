@@ -6,7 +6,7 @@ import Constants from "expo-constants";
 export const trpc = createTRPCProxyClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: "https://ai-tango-490531136583.us-central1.run.app/trpc",
+      url: `${Constants.expoConfig?.extra?.API_BASE_URL}/trpc`,
       headers: {
         Authorization: `Bearer ${Constants.expoConfig?.extra?.API_SECRET_KEY}`,
       },
